@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday Ambreen! ✨ | Mere Jigar Ka Tukda 💕</title>
+    <meta name="description" content="An interactive 3D birthday celebration crafted for Ambreen — meri sabse achi dost, mera jigar ka tukda. Featuring Three.js 3D cake, 21st.dev spatial photo carousel, floating sky lanterns, and celebratory fireworks.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
+    
+    <!-- Design System Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+    <!-- Fullscreen Interactive Canvas for Click-to-launch Fireworks -->
+    <canvas id="fireworksCanvas"></canvas>
+
+    <!-- Floating Glassmorphic Music Player -->
+    <div class="music-player-pill" title="Toggle Birthday Melody">
+        <div class="vinyl-disc" id="vinylDisc"></div>
+        <div class="music-info">
+            <span class="music-title">Happy Birthday Ambreen</span>
+            <span class="music-sub">Dedicated to Mere Jigar Ka Tukda 💕</span>
+        </div>
+        <div class="music-bars" id="musicVisualizer">
+            <span></span><span></span><span></span><span></span>
+        </div>
+        <button class="music-toggle-btn" id="musicToggleBtn" onclick="window.toggleBirthdayMusic()" aria-label="Play or Pause Music">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <polygon points="5 3 19 12 5 21 5 3"></polygon>
+            </svg>
+        </button>
+    </div>
+
+    <!-- ======================================================================
+         SCENE 0: INTRO UNWRAPPING CEREMONY OVERLAY
+         ====================================================================== -->
+    <div class="intro-overlay" id="introOverlay">
+        <div class="intro-card">
+            <div class="giftbox-3d" id="giftBoxTrigger">
+                <div class="giftbox-lid">
+                    <div class="giftbox-ribbon-v"></div>
+                    <div class="giftbox-bow">🎀</div>
+                </div>
+                <div class="giftbox-body">
+                    <div class="giftbox-ribbon-v"></div>
+                    <div class="giftbox-ribbon-h"></div>
+                </div>
+            </div>
+            <span class="intro-tag">✨ Ek Bohat Khaas Tohfa ✨</span>
+            <h1 class="intro-title">A Special Surprise For Ambreen</h1>
+            <p class="intro-subtitle">Online mile the hum, lekin tum meri zindagi ki sabse pyari dost aur mere jigar ka tukda ban gayi. Tumhare is khass din ke liye ek chhota sa jahan sajaya hai.</p>
+            <button class="unwrap-btn" id="unwrapBtn">
+                <span>✨ Tap to Unwrap Your Surprise, Ambreen ✨</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         MAIN CELEBRATION APP
+         ====================================================================== -->
+    <main class="main-content" id="mainContent">
+
+        <!-- SCENE 1: HERO & 3D INTERACTIVE CAKE STAGE -->
+        <section class="hero-section">
+            <div class="hero-badge">
+                <span>👑 Mera Jigar Ka Tukda • Queen of the Day</span>
+            </div>
+            <h1 class="hero-title">Happy Birthday, <span class="maggie-glow">Ambreen</span>!</h1>
+            <p class="hero-subtitle">Beshak hum internet ke zariye mile, par tum mere dil ke sabse kareeb ho. May your year be as beautiful, glowing, and unforgettable as your soul!</p>
+
+            <!-- 3D Three.js Cake Stage -->
+            <div class="cake-3d-wrapper">
+                <div id="cake3dContainer"></div>
+                <span class="cake-hint">✨ Drag around to rotate the 3D cake 360°</span>
+            </div>
+
+            <!-- Cake Interactive Action Buttons -->
+            <div class="cake-actions hero-actions">
+                <button class="btn-primary" id="blowCandlesBtn">
+                    <span>💨 Blow Out Candles & Make a Wish</span>
+                </button>
+                <button class="btn-secondary" id="relightCandlesBtn" style="display: none;">
+                    <span>🔥 Relight Candles</span>
+                </button>
+                <button class="btn-secondary" id="cutCakeBtn">
+                    <span>🍰 Cut the Cake</span>
+                </button>
+                <button class="btn-secondary" id="grandCelebrationBtn">
+                    <span>🎆 Launch Fireworks</span>
+                </button>
+            </div>
+
+            <!-- Blowout Celebration Banner -->
+            <div class="wish-banner" id="wishCelebrationBanner">
+                <h3>🌟 Your Birthday Wish Has Been Cast to the Stars!</h3>
+                <p>May every single dream you carry in your heart turn into radiant reality, mere jigar ka tukda Ambreen! 💖</p>
+            </div>
+        </section>
+
+        <!-- SCENE 2: 21ST.DEV STYLE 3D SPATIAL PHOTO GALLERY -->
+        <section class="gallery-section">
+            <span class="section-tag">28 Cherished Frames</span>
+            <h2 class="section-title">Ambreen's Radiant Moments</h2>
+            <p class="section-desc">Every smile of yours tells a story of elegance, happiness, and timeless grace. Explore all 28 cherished memories below.</p>
+
+            <!-- Mode Switcher Tabs -->
+            <div class="gallery-tabs">
+                <button class="tab-btn active" id="tabBtn-carousel3d" onclick="window.birthdayGallery.switchMode('carousel3d')">
+                    🌀 3D Spatial Carousel
+                </button>
+                <button class="tab-btn" id="tabBtn-deck" onclick="window.birthdayGallery.switchMode('deck')">
+                    🃏 3D Depth Card Deck
+                </button>
+                <button class="tab-btn" id="tabBtn-grid" onclick="window.birthdayGallery.switchMode('grid')">
+                    🖼️ Curated Grid
+                </button>
+            </div>
+
+            <!-- MODE A: 3D Cylindrical Orbit Carousel -->
+            <div class="gallery-view active" id="view-carousel3d">
+                <div class="carousel-3d-viewport" id="carousel3dViewport">
+                    <div class="carousel-3d-cylinder" id="carousel3dCylinder"></div>
+                </div>
+                <div class="carousel-nav-arrows">
+                    <button class="nav-arrow-btn" onclick="window.birthdayGallery.rotateCarousel(25)" title="Rotate Left">‹</button>
+                    <button class="nav-arrow-btn" onclick="window.birthdayGallery.rotateCarousel(-25)" title="Rotate Right">›</button>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
+                    👆 Drag left or right to orbit the 3D gallery | Click any card to inspect in high resolution
+                </p>
+            </div>
+
+            <!-- MODE B: 21st.dev Stacked Card Deck -->
+            <div class="gallery-view" id="view-deck">
+                <div class="deck-view-container">
+                    <div class="deck-cards-wrapper" id="deckCardsContainer"></div>
+                    <div class="deck-controls">
+                        <button class="nav-arrow-btn" onclick="window.birthdayGallery.prevDeckCard()" title="Previous Memory">‹</button>
+                        <span class="deck-counter" id="deckCounterText">1 / 28</span>
+                        <button class="nav-arrow-btn" onclick="window.birthdayGallery.nextDeckCard()" title="Next Memory">›</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MODE C: Curated Bento / Masonry Grid -->
+            <div class="gallery-view" id="view-grid">
+                <div class="photo-grid-container" id="photoGridContainer"></div>
+            </div>
+        </section>
+
+        <!-- SCENE 3: RAPUNZEL GLOWING SKY LANTERNS CEREMONY -->
+        <section class="lantern-section">
+            <span class="section-tag">Yi Peng & Tangled Night Sky</span>
+            <h2 class="section-title">Whispers of Love & Starlight</h2>
+            <p class="section-desc">Release a warm glowing wish lantern that drifts forever into the midnight sky for Ambreen. Tap on any drifting lantern to read whispered wishes.</p>
+
+            <div class="lantern-canvas-wrapper">
+                <canvas id="lanternSkyCanvas"></canvas>
+                <div class="lantern-overlay-hint">
+                    ✨ Tap any floating lantern in the sky to read its heartfelt wish
+                </div>
+            </div>
+
+            <button class="btn-primary" id="openLanternModalBtn">
+                <span>🏮 Release a Wish Lantern for Ambreen</span>
+            </button>
+        </section>
+
+        <!-- SCENE 4: HER STORY & CHAPTERS TIMELINE -->
+        <section class="timeline-section">
+            <span class="section-tag">A Beautiful Connection</span>
+            <h2 class="section-title">Chapters of Ambreen</h2>
+            <p class="section-desc">From random screens to the deepest bond of friendship — celebrating the rarest gem in my life.</p>
+
+            <div class="timeline-track">
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-card">
+                        <span class="timeline-badge">Chapter I • Online Spark</span>
+                        <h4>Kismat Ka Connection 🌐</h4>
+                        <p>Hum online mile the... ajnabi ban ke shuru hui baat kab meri zindagi ki sabse pyari aur sacchi dosti ban gayi pata hi nahi chala. Distance means so little when someone means so much.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-card">
+                        <span class="timeline-badge">Chapter II • Mera Jigar Ka Tukda</span>
+                        <h4>Bohat Khaas, Bohat Azeez 💕</h4>
+                        <p>Tum sirf ek dost nahi ho, tum mere jigar ka tukda ho. Chahe hazaron log aas paas hon, par tumse baat karke jo sukoon milta hai wo kisi aur cheez mein nahi.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-card">
+                        <span class="timeline-badge">Chapter III • Pure Joy</span>
+                        <h4>Teri Hansi, Sabse Pyari ✨</h4>
+                        <p>Wo ghanton ki baatein, pagalon jaisi hasi, aur har baat ek doosre se share karna. Your smile has the power to melt away every worry.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-card">
+                        <span class="timeline-badge">Chapter IV • The Pure Soul</span>
+                        <h4>Kind, Beautiful & Fearless 🌸</h4>
+                        <p>Aisi dost jiska dil saaf ho aur rooh itni khoobsurat. You are genuinely one in a billion, Ambreen.</p>
+                    </div>
+                </div>
+
+                <div class="timeline-item">
+                    <div class="timeline-node"></div>
+                    <div class="timeline-card">
+                        <span class="timeline-badge">Chapter V • Today & Forever</span>
+                        <h4>Happy Birthday Meri Best Friend 🎂</h4>
+                        <p>Allah kare tumhari zindagi ka har ek din khushiyon, kamyabi aur muskurahaton se bhara rahe. Tum hamesha hasti raho aur aisi hi chamakti raho!</p>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </section>
+
+        <!-- SCENE 5: GOLDEN WAX SEAL LETTER FOR AMBREEN -->
+        <section class="letter-section">
+            <span class="section-tag">A Keepsake From the Heart</span>
+            <h2 class="section-title">The Birthday Letter</h2>
+            <p class="section-desc">A special message sealed just for you. Break the royal wax seal to read.</p>
+
+            <div class="envelope-wrapper">
+                <div class="envelope" id="birthdayEnvelope">
+                    <div class="envelope-front">
+                        <div class="wax-seal" id="waxSealBtn" title="Click to break seal & open letter">
+                            <span class="wax-seal-monogram">A</span>
+                        </div>
+                        <div class="envelope-to">For Dearest Ambreen 💕</div>
+                        <span class="envelope-prompt">✨ Tap the Golden Seal 'A' to Open ✨</span>
+                    </div>
+                </div>
+
+                <!-- Sliding Parchment Letter -->
+                <div class="parchment-letter" id="birthdayLetter">
+                    <div class="parchment-salutation">Meri Pyaari Dost Ambreen,</div>
+                    <p class="parchment-body">
+                        Sach kahun toh maine kabhi socha bhi nahi tha ke internet ki is bheed mein mujhe aisi dost milegi jo mere dil ke itne qareeb ho jayegi. Hum online mile the, par dooriyon ke bawajood tum mere liye sabse khaas aur mere jigar ka tukda ban gayi.
+                    </p>
+                    <p class="parchment-body">
+                        Log kehte hain online dosti sirf baaton tak rehti hai, par tumne sabit kiya ke dosti dil se hoti hai, screens se nahi. Teri hasi, teri masoomiyat, wo ghanton ki baatein aur tera sath mere liye duniya ki sabse badi blessing hai. In a world of temporary people, you are my permanent comfort.
+                    </p>
+                    <p class="parchment-body">
+                        Is janamdin par meri dil se dua hai ke Allah tumhe har wo khushi de jo tum deserve karti ho. Tumhari aankhon mein kabhi dukh na aaye, tumhara chehra hamesha aise hi muskurata rahe, aur humari ye dosti hamesha aise hi salamat rahe.
+                    </p>
+                    <div class="parchment-signature">
+                        Hamesha Tera Acha Dost • Mere Jigar Ka Tukda 💕
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SCENE 6: WISHES WALL & GUESTBOOK -->
+        <section class="wishes-section">
+            <span class="section-tag">Leave Your Love</span>
+            <h2 class="section-title">The Birthday Wish Wall</h2>
+            <p class="section-desc">Heartwarming blessings from loved ones. Leave your own mark on Ambreen's memory board.</p>
+
+            <div class="wishes-board" id="wishesGrid"></div>
+
+            <!-- Form to Post a New Wish -->
+            <div class="add-wish-card">
+                <h4>Leave a Birthday Blessing for Ambreen</h4>
+                <form class="wish-form" id="addWishForm">
+                    <div class="form-group">
+                        <label for="wishAuthorInput">Your Name</label>
+                        <input type="text" id="wishAuthorInput" placeholder="e.g. Maya / Ankit" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="wishTextInput">Your Message or Wish</label>
+                        <textarea id="wishTextInput" rows="3" placeholder="Write something sweet, funny, or memorable for Ambreen..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn-primary" style="align-self: flex-start;">
+                        <span>📌 Pin Wish to Board</span>
+                    </button>
+                    <div class="wish-success" id="wishSuccessMsg">
+                        ✨ Your wish has been lovingly pinned to Ambreen's board!
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>Crafted with endless affection <span class="heart">❤️</span> for <strong>Ambreen</strong> on her Birthday.</p>
+            <p style="margin-top: 6px; font-size: 0.78rem; color: var(--text-muted);">
+                Dedicated to Mere Jigar Ka Tukda • Engineered with Three.js WebGL & 21st.dev UI Patterns.
+            </p>
+        </footer>
+
+    </main>
+
+    <!-- ======================================================================
+         MODALS & INTERACTIVE OVERLAYS
+         ====================================================================== -->
+
+    <!-- Floating Action Pill (Shower Love) -->
+    <div class="floating-actions">
+        <button class="float-btn" id="floatingLoveBtn" title="Send Floating Hearts">
+            <span>💖 Shower Love</span>
+            <span id="loveCounter">365</span>
+        </button>
+    </div>
+
+    <!-- Fullscreen Lightbox Modal -->
+    <div class="lightbox-modal" id="photoLightboxModal">
+        <span class="lightbox-close-btn" onclick="window.birthdayGallery.closeLightbox()">&times;</span>
+        <button class="lightbox-nav-btn lightbox-prev" onclick="window.birthdayGallery.lightboxPrev()">‹</button>
+        <button class="lightbox-nav-btn lightbox-next" onclick="window.birthdayGallery.lightboxNext()">›</button>
+
+        <div class="lightbox-content">
+            <div class="lightbox-img-frame">
+                <img id="lightboxImg" src="" alt="Ambreen Full Photo">
+            </div>
+            <div class="lightbox-caption" id="lightboxCaption"></div>
+            <div class="lightbox-actions">
+                <span id="lightboxCounter" style="color: var(--gold-light); font-weight: 600; font-size: 0.85rem;"></span>
+                <button class="btn-secondary" id="lightboxLikeBtn" onclick="window.birthdayGallery.toggleLike(window.birthdayGallery.activeLightboxIndex, event)">
+                    ❤️ Like
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Release Lantern Modal -->
+    <div class="modal-backdrop" id="lanternModal">
+        <div class="modal-window">
+            <span class="modal-close-btn" id="closeLanternModalBtn">&times;</span>
+            <h3 class="modal-title">🏮 Release a Wish Lantern</h3>
+            <p style="font-size: 0.88rem; color: var(--text-secondary);">
+                Your wish will be inscribed in light and sent floating into the midnight sky for Ambreen.
+            </p>
+
+            <span class="preset-wishes-label">Or choose a quick blessing:</span>
+            <div class="preset-wishes-pills">
+                <span class="preset-wish-pill">✨ Endless smiles & pure bliss!</span>
+                <span class="preset-wish-pill">👑 Mera jigar ka tukda, hamesha khush raho!</span>
+                <span class="preset-wish-pill">🌟 May all your wishes come true, Ambreen!</span>
+                <span class="preset-wish-pill">💕 Sabse pyari dost, happy birthday!</span>
+            </div>
+
+            <div class="form-group">
+                <label for="lanternSenderInput">Your Name</label>
+                <input type="text" id="lanternSenderInput" placeholder="e.g. Your Best Friend">
+            </div>
+
+            <div class="form-group">
+                <label for="lanternWishInput">Your Wish for Ambreen</label>
+                <textarea id="lanternWishInput" rows="3" placeholder="Write your heartfelt wish here..."></textarea>
+            </div>
+
+            <button class="btn-primary" id="sendLanternBtn" style="width: 100%; justify-content: center;">
+                <span>✨ Send Lantern to the Sky ✨</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ======================================================================
+         CORE SCRIPTS (ALL SAVED LOCALLY FOR INSTANT 0ms ZERO-LATENCY LOADING)
+         ====================================================================== -->
+    <script src="assets/js/three.min.js"></script>
+    <script src="assets/js/OrbitControls.js"></script>
+    <script src="assets/js/gsap.min.js"></script>
+    <script src="assets/js/ScrollTrigger.min.js"></script>
+    <script src="assets/js/confetti.browser.min.js"></script>
+
+    <!-- Custom Feature Modules -->
+    <script src="assets/js/audio.js"></script>
+    <script src="assets/js/three-scene.js"></script>
+    <script src="assets/js/gallery-3d.js"></script>
+    <script src="assets/js/lanterns.js"></script>
+    <script src="assets/js/fireworks.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>
