@@ -35,6 +35,82 @@
     <!-- ======================================================================
          SCENE 0: INTRO UNWRAPPING CEREMONY OVERLAY
          ====================================================================== -->
+        <!-- ======================================================================
+         SCENE -1: MIDNIGHT COUNTDOWN LOCK OVERLAY (UNLOCKED ONLY AT 12:00 AM)
+         ====================================================================== -->
+    <div class="countdown-screen" id="countdownScreen">
+        <!-- Floating ambient glowing lights -->
+        <div class="countdown-lights">
+            <span class="light-orb orb-1"></span>
+            <span class="light-orb orb-2"></span>
+            <span class="light-orb orb-3"></span>
+        </div>
+
+        <div class="countdown-container">
+            <!-- Badge -->
+            <div class="countdown-badge">
+                <span>⏳ THE MIDNIGHT UNLOCK ✨</span>
+            </div>
+
+            <!-- Header -->
+            <h1 class="countdown-title">Counting Down to Ambreen's Birthday</h1>
+            <p class="countdown-subtitle">
+                A magical celebration is waiting for you. The website unlocks strictly at 12:00 AM midnight!
+            </p>
+
+            <!-- Animated Glassmorphism Countdown Timer -->
+            <div class="countdown-timer" id="countdownTimer">
+                <div class="countdown-unit">
+                    <div class="countdown-card">
+                        <span class="countdown-number" id="countdownHours">00</span>
+                    </div>
+                    <span class="countdown-label">Hours</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-unit">
+                    <div class="countdown-card">
+                        <span class="countdown-number" id="countdownMinutes">00</span>
+                    </div>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-separator">:</div>
+                <div class="countdown-unit">
+                    <div class="countdown-card">
+                        <span class="countdown-number" id="countdownSeconds">00</span>
+                    </div>
+                    <span class="countdown-label">Seconds</span>
+                </div>
+            </div>
+
+            <!-- Heartfelt SMS Message Card (iOS iMessage Style) -->
+            <div class="countdown-sms-card">
+                <div class="sms-header">
+                    <div class="sms-avatar">M</div>
+                    <div class="sms-info">
+                        <div class="sms-name">Mustapha 💕</div>
+                        <div class="sms-status">Mere Jigar Ka Tukda</div>
+                    </div>
+                    <span class="sms-badge">12:00 AM Midnight</span>
+                </div>
+                <div class="sms-bubble">
+                    <p>
+                        "Bas thoda sa intezar aur meri pyari dost... Jaise hi raat ke 12:00 bajenge, tumhara birthday officially shuru ho jayega! Mere jigar ke tukde ke liye ek bohot khaas aur magical surprise lock kiya hua hai. Exactly at 12:00 AM midnight, the celebration doors will unlock for you!"
+                    </p>
+                    <div class="sms-footer">
+                        <span>Delivered with love ❤️</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIP / Preview Unlock Button (For Mustapha to test anytime) -->
+            <div class="countdown-actions">
+                <button class="btn-unlock-preview" id="unlockPreviewBtn" title="Mustapha VIP Access / Preview Celebration Early">
+                    <span>🔓 Preview Surprise Now (VIP Access)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="intro-overlay" id="introOverlay">
         <div class="intro-card">
             <div class="giftbox-3d" id="giftBoxTrigger">

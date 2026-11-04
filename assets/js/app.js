@@ -3,6 +3,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
+    // 0. Setup Midnight Countdown Lock
+    setupCountdownLock();
     // 1. Initialize Fireworks Canvas
     window.birthdayFireworks = new InteractiveFireworks('fireworksCanvas');
 
@@ -27,6 +29,134 @@ document.addEventListener('DOMContentLoaded', () => {
     // 8. Setup Floating Love Hearts
     setupFloatingLove();
 });
+
+
+// 0. Setup Midnight Countdown Lock Screen (Unlocks strictly at 12:00 AM)
+function setupCountdownLock() {
+    const countdownScreen = document.getElementById('countdownScreen');
+    const hoursEl = document.getElementById('countdownHours');
+    const minsEl = document.getElementById('countdownMinutes');
+    const secsEl = document.getElementById('countdownSeconds');
+    const unlockBtn = document.getElementById('unlockPreviewBtn');
+
+    if (!countdownScreen) return;
+
+    // Check query params: e.g. ?preview=true or ?unlock=true (for testing by Mustapha)
+    const urlParams = new URLSearchParams(window.location.search);
+    const isBypass = urlParams.has('preview') || urlParams.has('unlock');
+    const isSessionUnlocked = sessionStorage.getItem('ambreen_birthday_preview_unlocked') === 'true';
+
+    // Target calculation: Upcoming 12:00:00 AM (Midnight)
+    function getTargetMidnight() {
+        if (urlParams.has('target')) {
+            const parsed = new Date(urlParams.get('target')).getTime();
+            if (!isNaN(parsed)) return parsed;
+        }
+        const now = new Date();
+        // Target is tonight's upcoming midnight (12:00:00 AM)
+        const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0);
+        return midnight.getTime();
+    }
+
+    const targetMidnight = getTargetMidnight();
+    const nowTime = new Date().getTime();
+
+    function unlockWebsite(animate = true) {
+        document.body.classList.remove('locked-countdown');
+        if (animate) {
+            // Confetti explosion
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 120,
+                    spread: 100,
+                    origin: { y: 0.5 },
+                    colors: ['#f6c867', '#ff6584', '#a855f7', '#38bdf8']
+                });
+            }
+            if (window.birthdayAudio) {
+                try { window.birthdayAudio.playWishChime(); } catch(e) {}
+            }
+            if (typeof gsap !== 'undefined') {
+                gsap.to(countdownScreen, {
+                    opacity: 0,
+                    scale: 1.05,
+                    duration: 0.8,
+                    ease: "power2.inOut",
+                    onComplete: () => {
+                        countdownScreen.style.display = 'none';
+                        countdownScreen.remove();
+                    }
+                });
+            } else {
+                countdownScreen.style.opacity = '0';
+                setTimeout(() => {
+                    countdownScreen.style.display = 'none';
+                    countdownScreen.remove();
+                }, 500);
+            }
+        } else {
+            countdownScreen.style.display = 'none';
+            countdownScreen.remove();
+        }
+    }
+
+    // Condition Check: If current time is already >= targetMidnight OR Mustapha's VIP preview
+    if (nowTime >= targetMidnight) {
+        // 12:00 AM Midnight has passed! Website is unlocked!
+        unlockWebsite(false);
+        return;
+    }
+
+    if (isBypass || isSessionUnlocked) {
+        // VIP preview mode activated
+        unlockWebsite(false);
+        return;
+    }
+
+    // STRICT LOCK: Current time is before 12:00 AM!
+    // Lock the website: hide mainContent, introOverlay, music player, floating actions!
+    document.body.classList.add('locked-countdown');
+
+    function tick() {
+        const current = new Date().getTime();
+        const diff = targetMidnight - current;
+
+        if (diff <= 0) {
+            if (hoursEl) hoursEl.textContent = '00';
+            if (minsEl) minsEl.textContent = '00';
+            if (secsEl) secsEl.textContent = '00';
+            clearInterval(timerInterval);
+            setTimeout(() => {
+                unlockWebsite(true);
+            }, 600);
+            return;
+        }
+
+        const h = Math.floor(diff / (1000 * 60 * 60));
+        const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((diff % (1000 * 60)) / 1000);
+
+        if (hoursEl) hoursEl.textContent = String(h).padStart(2, '0');
+        if (minsEl) minsEl.textContent = String(m).padStart(2, '0');
+        if (secsEl) secsEl.textContent = String(s).padStart(2, '0');
+    }
+
+    const timerInterval = setInterval(tick, 1000);
+    tick();
+
+    if (unlockBtn) {
+        unlockBtn.addEventListener('click', () => {
+            sessionStorage.setItem('ambreen_birthday_preview_unlocked', 'true');
+            unlockWebsite(true);
+        });
+    }
+
+    // Global unlock hook for manual inspection
+    window.unlockCountdownScreen = () => {
+        sessionStorage.setItem('ambreen_birthday_preview_unlocked', 'true');
+        unlockWebsite(true);
+    };
+}
 
 // 1. Intro Unwrap Ceremony (Bulletproof Multi-Trigger)
 function setupIntroUnwrap() {

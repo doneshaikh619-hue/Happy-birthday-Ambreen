@@ -216,45 +216,51 @@ class BirthdayAudioEngine {
         noise.stop(now + 0.8);
     }
 
-    // Sound FX: Firework Launch & Pop
+    // Sound FX: Realistic Multi-variant Fireworks (Whistle launch + Randomized Boom Burst)
     playFireworkPop() {
         this.init();
-        if (this.isMuted || !this.ctx) return;
+        if (this.isMuted) return;
 
-        const now = this.ctx.currentTime;
-        // Whistle
-        const osc = this.ctx.createOscillator();
-        const oscGain = this.ctx.createGain();
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(300, now);
-        osc.frequency.exponentialRampToValueAtTime(900, now + 0.3);
+        // 1. Play rocket launch whistle
+        try {
+            const whistle = new Audio('assets/audio/firework-whistle.mp3');
+            whistle.volume = 0.55;
+            whistle.playbackRate = 0.95 + Math.random() * 0.2;
+            whistle.play().catch(() => {});
+        } catch(e) {}
 
-        oscGain.gain.setValueAtTime(0.15, now);
-        oscGain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
-
-        osc.connect(oscGain);
-        oscGain.connect(this.sfxGain);
-        osc.start(now);
-        osc.stop(now + 0.3);
-
-        // Pop burst
+        // 2. Play distinct explosion / burst after launch delay (350ms)
         setTimeout(() => {
-            if (!this.ctx) return;
-            const popTime = this.ctx.currentTime;
-            const popOsc = this.ctx.createOscillator();
-            const popGain = this.ctx.createGain();
-            popOsc.type = 'sine';
-            popOsc.frequency.setValueAtTime(160, popTime);
-            popOsc.frequency.exponentialRampToValueAtTime(40, popTime + 0.25);
+            try {
+                const burstSources = [
+                    'assets/audio/firework-burst-1.mp3',
+                    'assets/audio/firework-burst-2.mp3',
+                    'assets/audio/firework-burst-3.mp3'
+                ];
+                const chosenSource = burstSources[Math.floor(Math.random() * burstSources.length)];
+                const burst = new Audio(chosenSource);
+                burst.volume = 0.75;
+                // Randomized pitch so every single firework has its own unique tone
+                burst.playbackRate = 0.88 + Math.random() * 0.28;
+                burst.play().catch(() => {});
+            } catch(e) {}
 
-            popGain.gain.setValueAtTime(0.4, popTime);
-            popGain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.35);
-
-            popOsc.connect(popGain);
-            popGain.connect(this.sfxGain);
-            popOsc.start(popTime);
-            popOsc.stop(popTime + 0.35);
-        }, 300);
+            // Web Audio synthesizer backup for rich bass rumble
+            if (this.ctx) {
+                const popTime = this.ctx.currentTime;
+                const popOsc = this.ctx.createOscillator();
+                const popGain = this.ctx.createGain();
+                popOsc.type = 'sine';
+                popOsc.frequency.setValueAtTime(140 + Math.random() * 40, popTime);
+                popOsc.frequency.exponentialRampToValueAtTime(30, popTime + 0.3);
+                popGain.gain.setValueAtTime(0.3, popTime);
+                popGain.gain.exponentialRampToValueAtTime(0.001, popTime + 0.3);
+                popOsc.connect(popGain);
+                popGain.connect(this.sfxGain);
+                popOsc.start(popTime);
+                popOsc.stop(popTime + 0.3);
+            }
+        }, 360);
     }
 
     // Sound FX: Celestial Harp / Wish Sparkle

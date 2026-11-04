@@ -1695,3 +1695,321 @@ footer span.heart {
         max-height: 52vh;
     }
 }
+
+
+/* ==========================================================================
+   SCENE -1: MIDNIGHT COUNTDOWN LOCK OVERLAY
+   ========================================================================== */
+body.locked-countdown #mainContent,
+body.locked-countdown #introOverlay,
+body.locked-countdown .music-player-pill,
+body.locked-countdown .floating-actions {
+    display: none !important;
+}
+
+.countdown-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at 50% 25%, #181126 0%, #0a0912 60%, #030206 100%);
+    overflow-y: auto;
+    padding: 30px 20px;
+    opacity: 1;
+    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.countdown-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(1.05);
+}
+
+.countdown-lights {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+.countdown-lights .light-orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.45;
+    animation: orbFloat 8s ease-in-out infinite alternate;
+}
+.countdown-lights .orb-1 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, #f6c867 0%, transparent 70%);
+    top: -100px;
+    left: 15%;
+}
+.countdown-lights .orb-2 {
+    width: 420px;
+    height: 420px;
+    background: radial-gradient(circle, #ff6584 0%, transparent 70%);
+    bottom: -80px;
+    right: 15%;
+    animation-delay: -3s;
+}
+.countdown-lights .orb-3 {
+    width: 320px;
+    height: 320px;
+    background: radial-gradient(circle, #a855f7 0%, transparent 70%);
+    top: 40%;
+    right: 35%;
+    animation-delay: -5s;
+}
+
+.countdown-container {
+    position: relative;
+    max-width: 680px;
+    width: 100%;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 22px;
+    z-index: 2;
+}
+
+.countdown-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 18px;
+    background: rgba(246, 200, 103, 0.12);
+    border: 1px solid rgba(246, 200, 103, 0.35);
+    border-radius: 999px;
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 25px rgba(246, 200, 103, 0.2);
+}
+
+.countdown-title {
+    font-family: var(--font-serif);
+    font-size: 2.6rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ffffff 20%, #f6c867 75%, #ff8da1 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1.2;
+    letter-spacing: -0.5px;
+}
+
+.countdown-subtitle {
+    font-size: 1.05rem;
+    color: rgba(255, 255, 255, 0.75);
+    max-width: 500px;
+    line-height: 1.6;
+}
+
+/* Luxury Animated Countdown Units */
+.countdown-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 8px 0;
+}
+.countdown-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+.countdown-card {
+    width: 96px;
+    height: 105px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(246, 200, 103, 0.28);
+    border-radius: 20px;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 0 30px rgba(246, 200, 103, 0.1);
+    transition: transform 0.3s var(--ease-spring), border-color 0.3s ease, box-shadow 0.3s ease;
+}
+.countdown-card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(246, 200, 103, 0.6);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.5), 0 0 35px rgba(246, 200, 103, 0.25);
+}
+.countdown-number {
+    font-family: var(--font-sans);
+    font-size: 3.2rem;
+    font-weight: 800;
+    background: linear-gradient(180deg, #ffffff 0%, #f6c867 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -1px;
+    line-height: 1;
+}
+.countdown-label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: rgba(255, 255, 255, 0.55);
+}
+.countdown-separator {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--gold);
+    opacity: 0.6;
+    margin-bottom: 24px;
+    animation: separatorPulse 1.5s ease-in-out infinite;
+}
+
+/* iOS iMessage Style SMS Card */
+.countdown-sms-card {
+    width: 100%;
+    max-width: 540px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 24px;
+    padding: 20px 22px;
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.35);
+    text-align: left;
+    margin-top: 4px;
+}
+.countdown-sms-card .sms-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.countdown-sms-card .sms-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #ff6584, #f6c867);
+    color: #0d0c18;
+    font-weight: 800;
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 15px rgba(255, 101, 132, 0.35);
+}
+.countdown-sms-card .sms-info {
+    flex: 1;
+}
+.countdown-sms-card .sms-name {
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.countdown-sms-card .sms-status {
+    font-size: 0.78rem;
+    color: var(--gold-light);
+    font-weight: 500;
+}
+.countdown-sms-card .sms-badge {
+    font-size: 0.72rem;
+    padding: 4px 10px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.7);
+    font-weight: 600;
+}
+.countdown-sms-card .sms-bubble {
+    background: linear-gradient(145deg, rgba(255, 101, 132, 0.12), rgba(246, 200, 103, 0.08));
+    border: 1px solid rgba(246, 200, 103, 0.2);
+    border-radius: 18px 18px 18px 4px;
+    padding: 16px 18px;
+    position: relative;
+}
+.countdown-sms-card .sms-bubble p {
+    font-size: 0.94rem;
+    line-height: 1.65;
+    color: #f1ede4;
+    font-style: italic;
+    margin: 0;
+}
+.countdown-sms-card .sms-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 6px;
+    margin-top: 10px;
+    font-size: 0.75rem;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* VIP Preview Button */
+.btn-unlock-preview {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    color: rgba(255, 255, 255, 0.85);
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-size: 0.84rem;
+    font-weight: 600;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+    margin-top: 4px;
+}
+.btn-unlock-preview:hover {
+    background: rgba(246, 200, 103, 0.18);
+    border-color: rgba(246, 200, 103, 0.45);
+    color: var(--gold-light);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(246, 200, 103, 0.2);
+}
+
+@media (max-width: 480px) {
+    .countdown-screen {
+        padding: 20px 14px;
+    }
+    .countdown-title {
+        font-size: 1.85rem;
+    }
+    .countdown-subtitle {
+        font-size: 0.9rem;
+    }
+    .countdown-card {
+        width: 72px;
+        height: 82px;
+        border-radius: 14px;
+    }
+    .countdown-number {
+        font-size: 2.3rem;
+    }
+    .countdown-separator {
+        font-size: 2rem;
+        margin-bottom: 18px;
+    }
+    .countdown-label {
+        font-size: 0.68rem;
+    }
+    .countdown-sms-card {
+        padding: 16px 14px;
+    }
+    .countdown-sms-card .sms-bubble {
+        padding: 13px 14px;
+    }
+    .countdown-sms-card .sms-bubble p {
+        font-size: 0.88rem;
+    }
+}
