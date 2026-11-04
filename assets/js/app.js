@@ -259,6 +259,14 @@ function setupWaxSealLetter() {
 
 // 4. Wish Wall / Guestbook with LocalStorage
 function setupWishWall() {
+    // Clean up old demo storage keys from earlier builds to remove any agent demo notes
+    try {
+        localStorage.removeItem('ambreen_birthday_wishes');
+        localStorage.removeItem('birthday_wishes');
+        localStorage.removeItem('wishes');
+    } catch(e) {}
+
+    // Only ONE heartfelt wish from Mustapha (spelled M-U-S-T-A-P-H-A)
     const defaultWishes = [
         { 
             name: "Mustapha", 
@@ -269,7 +277,10 @@ function setupWishWall() {
 
     let stored = [];
     try {
-        stored = JSON.parse(localStorage.getItem('ambreen_wishes_mustapha')) || [];
+        const raw = JSON.parse(localStorage.getItem('ambreen_wishes_mustapha')) || [];
+        // Purge any agent dummy wishes that might contain old demo names
+        const dummyNames = ['aarav', 'priya', 'dev & riya', 'kavya', 'ankit', 'maya'];
+        stored = raw.filter(item => item && item.name && !dummyNames.includes(item.name.toLowerCase()));
     } catch(e) { stored = []; }
 
     const allWishes = [...defaultWishes, ...stored];
