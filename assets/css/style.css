@@ -213,6 +213,7 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 20px;
+    cursor: pointer;
 }
 
 .giftbox-3d {
@@ -221,6 +222,15 @@ body {
     position: relative;
     cursor: pointer;
     animation: boxHover 2.6s ease-in-out infinite;
+    transition: transform 0.3s var(--ease-spring);
+}
+.giftbox-3d:hover {
+    transform: scale(1.08) translateY(-6px);
+}
+.giftbox-3d.opening .giftbox-lid {
+    transform: translateY(-45px) rotate(-22deg) scale(0.9);
+    opacity: 0;
+    transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
 }
 @keyframes boxHover {
     0%, 100% { transform: translateY(0) rotate(0deg); }
@@ -279,6 +289,13 @@ body {
     letter-spacing: 3px;
     color: var(--gold);
     font-weight: 700;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.25s ease, color 0.25s ease;
+}
+.intro-tag:hover {
+    transform: scale(1.05);
+    color: var(--gold-light);
 }
 
 .intro-title {
@@ -1588,4 +1605,93 @@ footer span.heart {
     .envelope { height: 280px; }
     .lightbox-prev, .lightbox-next { display: none; }
     .floating-actions { bottom: 16px; right: 16px; }
+}
+
+@media (max-width: 480px) {
+    .intro-overlay {
+        padding: 16px;
+    }
+    .intro-card {
+        padding: 30px 18px;
+        border-radius: 22px;
+        gap: 16px;
+    }
+    .intro-title {
+        font-size: 1.85rem;
+    }
+    .intro-subtitle {
+        font-size: 0.92rem;
+    }
+    .unwrap-btn {
+        width: 100%;
+        padding: 14px 18px;
+        font-size: 0.92rem;
+        justify-content: center;
+        text-align: center;
+    }
+    .hero-title {
+        font-size: 2.1rem;
+    }
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+    .cake-3d-wrapper {
+        height: 300px;
+    }
+    .cake-actions {
+        flex-direction: column;
+        width: 100%;
+        align-items: stretch;
+    }
+    .cake-actions button {
+        width: 100%;
+        max-width: 320px;
+        margin: 0 auto;
+        justify-content: center;
+    }
+    .gallery-tabs {
+        flex-wrap: wrap;
+        gap: 8px;
+        justify-content: center;
+    }
+    .tab-btn {
+        padding: 8px 14px;
+        font-size: 0.82rem;
+    }
+    .coverflow-viewport {
+        height: 340px;
+    }
+    .coverflow-card {
+        width: 190px;
+        height: 270px;
+        margin-top: -135px;
+        margin-left: -95px;
+    }
+    .coverflow-controls {
+        gap: 16px;
+    }
+    .envelope {
+        height: 250px;
+    }
+    .parchment-letter {
+        padding: 24px 18px;
+        border-radius: 16px;
+    }
+    .parchment-body {
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+    .parchment-signature {
+        font-size: 1.6rem;
+    }
+    .add-wish-card {
+        padding: 22px 18px;
+    }
+    .lightbox-content {
+        max-width: 95vw;
+        padding: 14px;
+    }
+    .lightbox-img-frame img {
+        max-height: 52vh;
+    }
 }

@@ -28,52 +28,137 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFloatingLove();
 });
 
-// 1. Intro Unwrap Ceremony
+// 1. Intro Unwrap Ceremony (Bulletproof Multi-Trigger)
 function setupIntroUnwrap() {
     const unwrapBtn = document.getElementById('unwrapBtn');
+    const giftBoxTrigger = document.getElementById('giftBoxTrigger');
+    const introTag = document.querySelector('.intro-tag');
+    const introCard = document.querySelector('.intro-card');
     const introOverlay = document.getElementById('introOverlay');
     const mainContent = document.getElementById('mainContent');
 
-    if (!unwrapBtn || !introOverlay) return;
+    if (!introOverlay || !mainContent) return;
 
-    unwrapBtn.addEventListener('click', () => {
-        // Play audio & sound effect
-        if (window.birthdayAudio) {
-            window.birthdayAudio.startMusic();
-            window.birthdayAudio.playWishChime();
+    let isUnwrapped = false;
+
+    function triggerUnwrap(e) {
+        if (isUnwrapped) return;
+        isUnwrapped = true;
+
+        if (e) e.stopPropagation();
+
+        // 1. Lid popping visual animation on the giftbox
+        if (giftBoxTrigger) {
+            giftBoxTrigger.classList.add('opening');
         }
 
-        // Confetti blast
-        if (typeof confetti === 'function') {
-            confetti({
-                particleCount: 160,
-                spread: 100,
-                origin: { y: 0.5 },
-                colors: ['#f6c867', '#ff6584', '#a855f7', '#38bdf8']
-            });
-        }
-
-        // GSAP cinematic vanish
-        gsap.to(introOverlay, {
-            opacity: 0,
-            scale: 1.08,
-            duration: 1.0,
-            ease: "power2.inOut",
-            onComplete: () => {
-                introOverlay.style.display = 'none';
-                mainContent.classList.add('visible');
-
-                // Trigger entrance animation for hero elements
-                gsap.from('.hero-badge, .hero-title, .hero-subtitle, .hero-actions', {
-                    y: 40,
-                    opacity: 0,
-                    stagger: 0.15,
-                    duration: 1.0,
-                    ease: "back.out(1.5)"
-                });
+        // 2. Play audio & sound effect safely
+        try {
+            if (window.birthdayAudio) {
+                window.birthdayAudio.startMusic();
+                window.birthdayAudio.playWishChime();
             }
+        } catch (err) {
+            console.warn('Audio start note:', err);
+        }
+
+        // 3. Multi-color confetti explosion
+        try {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 180,
+                    spread: 120,
+                    origin: { y: 0.5 },
+                    colors: ['#f6c867', '#ff6584', '#a855f7', '#38bdf8', '#ffffff']
+                });
+                setTimeout(() => {
+                    confetti({
+                        particleCount: 90,
+                        angle: 60,
+                        spread: 60,
+                        origin: { x: 0, y: 0.7 }
+                    });
+                    confetti({
+                        particleCount: 90,
+                        angle: 120,
+                        spread: 60,
+                        origin: { x: 1, y: 0.7 }
+                    });
+                }, 300);
+            }
+        } catch (err) {}
+
+        // 4. Immediately ensure main content can be interacted with and overlay won't block clicks
+        introOverlay.style.pointerEvents = 'none';
+        mainContent.classList.add('visible');
+        mainContent.style.opacity = '1';
+
+        // 5. Guaranteed Safety Fallback Timer (Overlay is ALWAYS removed)
+        const safetyTimer = setTimeout(() => {
+            if (introOverlay) {
+                introOverlay.style.display = 'none';
+                introOverlay.remove();
+            }
+        }, 700);
+
+        // 6. Smooth GSAP cinematic fade-out
+        if (typeof gsap !== 'undefined') {
+            gsap.to(introOverlay, {
+                opacity: 0,
+                scale: 1.08,
+                duration: 0.6,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    clearTimeout(safetyTimer);
+                    if (introOverlay && introOverlay.parentNode) {
+                        introOverlay.style.display = 'none';
+                        introOverlay.remove();
+                    }
+
+                    // Trigger smooth entrance animation for hero elements
+                    gsap.from('.hero-badge, .hero-title, .hero-subtitle, .hero-actions', {
+                        y: 35,
+                        opacity: 0,
+                        stagger: 0.12,
+                        duration: 0.8,
+                        ease: "back.out(1.5)"
+                    });
+                }
+            });
+        } else {
+            introOverlay.style.opacity = '0';
+            setTimeout(() => {
+                clearTimeout(safetyTimer);
+                if (introOverlay && introOverlay.parentNode) {
+                    introOverlay.style.display = 'none';
+                    introOverlay.remove();
+                }
+            }, 500);
+        }
+    }
+
+    // Attach click and touch listeners to ALL interactive elements on the intro card
+    if (unwrapBtn) {
+        unwrapBtn.addEventListener('click', triggerUnwrap);
+        unwrapBtn.addEventListener('touchend', triggerUnwrap);
+    }
+    if (giftBoxTrigger) {
+        giftBoxTrigger.addEventListener('click', triggerUnwrap);
+        giftBoxTrigger.addEventListener('touchend', triggerUnwrap);
+    }
+    if (introTag) {
+        introTag.addEventListener('click', triggerUnwrap);
+        introTag.addEventListener('touchend', triggerUnwrap);
+    }
+    if (introCard) {
+        introCard.addEventListener('click', (e) => {
+            // Trigger unwrap if clicking card background or texts
+            triggerUnwrap(e);
         });
-    });
+    }
+
+    // Global hook for programmatic reveal if ever needed
+    window.triggerBirthdayUnwrap = triggerUnwrap;
 }
 
 // 2. Cake Interactive Controls
