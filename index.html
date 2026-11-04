@@ -8,9 +8,9 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
     
     <!-- Design System Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css?v=2.2">
 </head>
-<body>
+<body class="locked-countdown">
 
     <!-- Fullscreen Interactive Canvas for Click-to-launch Fireworks -->
     <canvas id="fireworksCanvas"></canvas>
@@ -369,6 +369,9 @@
 
     <!-- Floating Action Pill (Shower Love) -->
     <div class="floating-actions">
+        <button class="float-btn" id="lockScreenToggleBtn" onclick="window.lockCountdownScreen()" title="View Midnight Countdown Lock" style="background: rgba(20, 12, 38, 0.85); border: 1px solid rgba(246, 200, 103, 0.4);">
+            <span>⏳ Countdown</span>
+        </button>
         <button class="float-btn" id="floatingLoveBtn" title="Send Floating Hearts">
             <span>💖 Shower Love</span>
             <span id="loveCounter">365</span>
@@ -405,10 +408,10 @@
     <script src="assets/js/confetti.browser.min.js"></script>
 
     <!-- Custom Feature Modules -->
-    <script src="assets/js/audio.js"></script>
-    <script src="assets/js/three-scene.js"></script>
-    <script src="assets/js/gallery-3d.js"></script>
-    <script src="assets/js/fireworks.js"></script>
-    <script src="assets/js/app.js"></script>
+    <script src="assets/js/audio.js?v=2.2"></script>
+    <script src="assets/js/three-scene.js?v=2.2"></script>
+    <script src="assets/js/gallery-3d.js?v=2.2"></script>
+    <script src="assets/js/fireworks.js?v=2.2"></script>
+    <script src="assets/js/app.js?v=2.2"></script>
 </body>
 </html>

@@ -41,10 +41,15 @@ function setupCountdownLock() {
 
     if (!countdownScreen) return;
 
+    // Purge any stale session bypass so countdown is ALWAYS shown on page load
+    try {
+        sessionStorage.removeItem('ambreen_birthday_preview_unlocked');
+        localStorage.removeItem('ambreen_birthday_preview_unlocked');
+    } catch(e) {}
+
     // Check query params: e.g. ?preview=true or ?unlock=true (for testing by Mustapha)
     const urlParams = new URLSearchParams(window.location.search);
     const isBypass = urlParams.has('preview') || urlParams.has('unlock');
-    const isSessionUnlocked = sessionStorage.getItem('ambreen_birthday_preview_unlocked') === 'true';
 
     // Target calculation: Upcoming 12:00:00 AM (Midnight)
     function getTargetMidnight() {
@@ -53,9 +58,9 @@ function setupCountdownLock() {
             if (!isNaN(parsed)) return parsed;
         }
         const now = new Date();
-        // Target is tonight's upcoming midnight (12:00:00 AM)
-        const midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 24, 0, 0, 0);
-        return midnight.getTime();
+        // Target is upcoming midnight (12:00:00 AM) using standard cross-browser Date rollover
+        const nextMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+        return nextMidnight.getTime();
     }
 
     const targetMidnight = getTargetMidnight();
@@ -84,38 +89,29 @@ function setupCountdownLock() {
                     ease: "power2.inOut",
                     onComplete: () => {
                         countdownScreen.style.display = 'none';
-                        countdownScreen.remove();
                     }
                 });
             } else {
                 countdownScreen.style.opacity = '0';
                 setTimeout(() => {
                     countdownScreen.style.display = 'none';
-                    countdownScreen.remove();
                 }, 500);
             }
         } else {
             countdownScreen.style.display = 'none';
-            countdownScreen.remove();
         }
     }
 
-    // Condition Check: If current time is already >= targetMidnight OR Mustapha's VIP preview
-    if (nowTime >= targetMidnight) {
-        // 12:00 AM Midnight has passed! Website is unlocked!
+    // Explicit bypass only via URL query (?preview=true)
+    if (isBypass) {
         unlockWebsite(false);
         return;
     }
 
-    if (isBypass || isSessionUnlocked) {
-        // VIP preview mode activated
-        unlockWebsite(false);
-        return;
-    }
-
-    // STRICT LOCK: Current time is before 12:00 AM!
-    // Lock the website: hide mainContent, introOverlay, music player, floating actions!
+    // Ensure locked-countdown class is strictly active on body
     document.body.classList.add('locked-countdown');
+    countdownScreen.style.display = 'flex';
+    countdownScreen.style.opacity = '1';
 
     function tick() {
         const current = new Date().getTime();
@@ -141,20 +137,28 @@ function setupCountdownLock() {
         if (secsEl) secsEl.textContent = String(s).padStart(2, '0');
     }
 
-    const timerInterval = setInterval(tick, 1000);
+    // Run tick immediately so numbers are instant
     tick();
+    const timerInterval = setInterval(tick, 1000);
 
     if (unlockBtn) {
-        unlockBtn.addEventListener('click', () => {
-            sessionStorage.setItem('ambreen_birthday_preview_unlocked', 'true');
+        unlockBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             unlockWebsite(true);
         });
     }
 
-    // Global unlock hook for manual inspection
+    // Global hooks for manual inspection or switching views
     window.unlockCountdownScreen = () => {
-        sessionStorage.setItem('ambreen_birthday_preview_unlocked', 'true');
         unlockWebsite(true);
+    };
+
+    window.lockCountdownScreen = () => {
+        document.body.classList.add('locked-countdown');
+        countdownScreen.style.display = 'flex';
+        countdownScreen.style.opacity = '1';
+        countdownScreen.style.transform = 'scale(1)';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 }
 
