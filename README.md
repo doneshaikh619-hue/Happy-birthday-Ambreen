@@ -13,24 +13,20 @@ An immersive, 3D interactive birthday celebration website created with love for 
   - **Interactive Candle Blowout**: Blow out candles with rising smoke particles, ambient light dimming, and celebratory fanfare.
   - **Interactive Cake Slicing**: Slice the cake with audio chimes and confetti pop.
 - **🌀 21st.dev Style 3D Spatial Photo Gallery**:
-  - **3D Cylindrical Orbit Carousel**: 360° drag-to-spin cylindrical photo gallery featuring all 28 cherished memories.
+  - **3D Spatial Coverflow**: Smooth, gliding 3D Coverflow gallery displaying all 28 cherished memories with realistic depth-of-field, tilt angles, and reflection.
   - **3D Depth Stacked Card Deck**: Spring swipe cards with mouse parallax tilt.
   - **Curated Bento Grid**: Editorial masonry layout.
   - **High-Res Lightbox**: Fullscreen inspection with interactive heart like reactions.
-- **🏮 Rapunzel / Tangled Glowing Sky Lanterns Night Sky**:
-  - Twinkling midnight stars and soft moonlit sky.
-  - Release personalized wish lanterns floating into the starry expanse.
-  - Tap any floating lantern in the sky to read whispered blessings.
 - **📜 Royal Wax-Seal Birthday Letter**:
   - 3D wax seal with monogram **'A'**.
-  - Tap seal to break and unfold an emotional handwritten parchment letter celebrating this special friendship.
+  - Tap seal to break and unfold an emotional handwritten parchment letter from Mustapha celebrating this special friendship.
 - **📖 Chapters of Ambreen**: A story timeline commemorating the journey from meeting online to becoming best friends and *mere jigar ka tukda*.
 - **🎵 Procedural Web Audio API Synthesizer**:
   - 100% zero-network dependency, zero audio loading latency.
   - Synthesizes soothing music box and acoustic chord melodies for "Happy Birthday Ambreen".
   - Interactive spinning vinyl disc and animated equalizer bars.
 - **🎆 Interactive Fireworks Engine**: Click anywhere on the screen to launch realistic physics-based fireworks rockets and sparkle explosions.
-- **📌 Interactive Birthday Wish Wall**: Pinned guestbook with persistent `localStorage`.
+- **📌 Interactive Birthday Wish Wall**: Pinned guestbook with persistent `localStorage` and a heartfelt default wish from Mustapha.
 
 ---
 

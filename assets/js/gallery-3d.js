@@ -1,25 +1,22 @@
 /**
- * 21st.dev Inspired 3D Spatial Photo Gallery & Card Deck for Maggie
- * Handles: 
- * 1. 3D Cylindrical Orbit Carousel (CSS 3D / transform-style: preserve-3d)
- * 2. 21st.dev Stacked Card Deck (Spring swipe & tilt)
- * 3. Curated Masonry / Bento Grid
- * 4. High-Res Interactive Lightbox with like heart reactions and captions
+ * Ultra-Smooth 3D Spatial Coverflow & Card Showcase for Ambreen
+ * Re-engineered to replace the spinning cylinder with a high-end 3D Coverflow:
+ * - Center card is focused, prominent, with glossy reflections & drop-shadow
+ * - Side cards cascade naturally with 3D perspective, angle tilt, scale, and smooth depth
+ * - Zero z-fighting or spinning glitches; one photo flows behind the other seamlessly
+ * - Touch swipe, drag, keyboard arrows, and direct click to bring any card forward
  */
 
 class BirthdayGallery {
     constructor() {
         this.photos = [];
-        this.currentMode = 'carousel3d'; // 'carousel3d' | 'deck' | 'grid'
-        this.carouselAngle = 0;
+        this.currentMode = 'coverflow'; // 'coverflow' | 'deck' | 'grid'
+        this.currentIndex = 0;
+        this.deckIndex = 0;
         this.isDragging = false;
         this.startX = 0;
-        this.currentX = 0;
-        this.autoRotateTimer = null;
-        this.isAutoRotating = true;
-
-        // Stack Deck state
-        this.deckIndex = 0;
+        this.autoPlayInterval = null;
+        this.isHovered = false;
 
         // Custom captions for Ambreen's 28 photos
         this.captions = [
@@ -56,8 +53,7 @@ class BirthdayGallery {
         this.init();
     }
 
-    async init() {
-        // Generate list of 28 photos
+    init() {
         for (let i = 1; i <= 28; i++) {
             this.photos.push({
                 id: i,
@@ -69,58 +65,218 @@ class BirthdayGallery {
 
         this.renderAllViews();
         this.setupEventListeners();
-        this.setupCarouselDrag();
-        this.startAutoRotate();
+        this.setupCoverflowGestures();
+        this.startAutoPlay();
     }
 
     renderAllViews() {
-        this.render3DCarousel();
+        this.buildCoverflowDOM();
+        this.updateCoverflowPositions();
         this.renderDeckCards();
         this.renderGrid();
     }
 
-    // 1. Mode A: 3D Cylindrical Carousel (21st.dev cult-ui style)
-    render3DCarousel() {
-        const cylinder = document.getElementById('carousel3dCylinder');
-        if (!cylinder) return;
+    // =========================================================================
+    // 1. MODE A: 3D SPATIAL COVERFLOW (Apple & 21st.dev Style)
+    // =========================================================================
+    buildCoverflowDOM() {
+        const track = document.getElementById('coverflowTrack');
+        if (!track) return;
 
-        cylinder.innerHTML = '';
-        const total = this.photos.length;
-        // Radius based on width
-        const radius = Math.max(480, (total * 70) / (2 * Math.PI));
+        track.innerHTML = '';
+        this.coverflowCards = [];
 
         this.photos.forEach((photo, idx) => {
-            const angle = (360 / total) * idx;
             const card = document.createElement('div');
-            card.className = 'carousel-3d-item';
-            card.style.transform = `rotateY(${angle}deg) translateZ(${radius}px)`;
-            
+            card.className = 'coverflow-card';
+            card.dataset.index = idx;
+
             card.innerHTML = `
-                <div class="carousel-card-inner">
+                <div class="coverflow-card-inner">
                     <img src="${photo.url}" alt="Ambreen ${photo.id}" loading="lazy">
-                    <div class="carousel-card-overlay">
-                        <span class="photo-badge">#${photo.id}</span>
-                        <p class="photo-snippet">${photo.caption.split('-')[0]}</p>
-                    </div>
+                    <div class="coverflow-card-glass"></div>
+                    <div class="coverflow-card-tag">#${photo.id}</div>
                 </div>
             `;
 
-            card.addEventListener('click', (e) => {
-                if (this.dragDistance > 10) return; // ignore clicks during drag
-                this.openLightbox(photo.id - 1);
+            // Click interaction
+            card.addEventListener('click', () => {
+                if (this.currentIndex === idx) {
+                    this.openLightbox(idx);
+                } else {
+                    this.goToCoverflow(idx);
+                }
             });
 
-            cylinder.appendChild(card);
+            track.appendChild(card);
+            this.coverflowCards.push(card);
         });
+
+        // Track hover to pause autoplay
+        const viewport = document.getElementById('coverflowViewport');
+        if (viewport) {
+            viewport.addEventListener('mouseenter', () => { this.isHovered = true; });
+            viewport.addEventListener('mouseleave', () => { this.isHovered = false; });
+        }
     }
 
-    // 2. Mode B: 21st.dev Stacked Card Deck (Swipe / Next)
+    updateCoverflowPositions() {
+        if (!this.coverflowCards || this.coverflowCards.length === 0) return;
+
+        const total = this.photos.length;
+        const current = this.currentIndex;
+        const isMobile = window.innerWidth <= 768;
+
+        const spacing = isMobile ? 130 : 210;
+        const centerZ = isMobile ? 60 : 120;
+        const depthZ = isMobile ? -100 : -140;
+        const maxVisible = isMobile ? 3 : 5;
+
+        this.coverflowCards.forEach((card, idx) => {
+            let offset = idx - current;
+
+            // Circular wrap around for smooth infinite carousel
+            const half = Math.floor(total / 2);
+            if (offset > half) offset -= total;
+            if (offset < -half) offset += total;
+
+            const absOffset = Math.abs(offset);
+
+            if (absOffset > maxVisible) {
+                card.style.opacity = '0';
+                card.style.pointerEvents = 'none';
+                card.style.transform = `translateX(${offset * spacing}px) translateZ(-600px) scale(0.5)`;
+                card.style.zIndex = '0';
+                return;
+            }
+
+            let tx, tz, rotY, scale, opacity;
+
+            if (offset === 0) {
+                // Focused Active Card
+                tx = 0;
+                tz = centerZ;
+                rotY = 0;
+                scale = 1.05;
+                opacity = 1;
+                card.classList.add('active');
+            } else if (offset > 0) {
+                // Cards to the Right
+                tx = offset * spacing + (isMobile ? 30 : 60);
+                tz = depthZ - (absOffset - 1) * 80;
+                rotY = -35;
+                scale = Math.max(0.68, 1 - absOffset * 0.1);
+                opacity = Math.max(0.2, 1 - absOffset * 0.2);
+                card.classList.remove('active');
+            } else {
+                // Cards to the Left
+                tx = offset * spacing - (isMobile ? 30 : 60);
+                tz = depthZ - (absOffset - 1) * 80;
+                rotY = 35;
+                scale = Math.max(0.68, 1 - absOffset * 0.1);
+                opacity = Math.max(0.2, 1 - absOffset * 0.2);
+                card.classList.remove('active');
+            }
+
+            card.style.pointerEvents = 'auto';
+            card.style.zIndex = 50 - absOffset;
+            card.style.opacity = opacity;
+            card.style.transform = `translateX(${tx}px) translateZ(${tz}px) rotateY(${rotY}deg) scale(${scale})`;
+        });
+
+        // Update active caption and counter
+        const activePhoto = this.photos[current];
+        const captionEl = document.getElementById('coverflowActiveCaption');
+        const counterEl = document.getElementById('coverflowCounter');
+
+        if (captionEl && activePhoto) {
+            captionEl.innerHTML = `
+                <span class="coverflow-title">${activePhoto.caption.split('-')[0]}</span>
+                <span class="coverflow-sub">${activePhoto.caption.split('-')[1] || ''}</span>
+            `;
+        }
+
+        if (counterEl) {
+            counterEl.textContent = `${current + 1} / ${total}`;
+        }
+    }
+
+    goToCoverflow(index) {
+        const total = this.photos.length;
+        this.currentIndex = (index + total) % total;
+        this.updateCoverflowPositions();
+    }
+
+    nextCoverflow() {
+        this.goToCoverflow(this.currentIndex + 1);
+    }
+
+    prevCoverflow() {
+        this.goToCoverflow(this.currentIndex - 1);
+    }
+
+    startAutoPlay() {
+        this.stopAutoPlay();
+        this.autoPlayInterval = setInterval(() => {
+            if (!this.isHovered && this.currentMode === 'coverflow') {
+                this.nextCoverflow();
+            }
+        }, 3800);
+    }
+
+    stopAutoPlay() {
+        if (this.autoPlayInterval) {
+            clearInterval(this.autoPlayInterval);
+            this.autoPlayInterval = null;
+        }
+    }
+
+    setupCoverflowGestures() {
+        const viewport = document.getElementById('coverflowViewport');
+        if (!viewport) return;
+
+        let startX = 0;
+        let deltaX = 0;
+        let isDown = false;
+
+        const handleStart = (clientX) => {
+            isDown = true;
+            startX = clientX;
+            deltaX = 0;
+        };
+
+        const handleMove = (clientX) => {
+            if (!isDown) return;
+            deltaX = clientX - startX;
+        };
+
+        const handleEnd = () => {
+            if (!isDown) return;
+            isDown = false;
+            if (deltaX < -45) {
+                this.nextCoverflow();
+            } else if (deltaX > 45) {
+                this.prevCoverflow();
+            }
+        };
+
+        viewport.addEventListener('mousedown', (e) => handleStart(e.clientX));
+        window.addEventListener('mousemove', (e) => handleMove(e.clientX));
+        window.addEventListener('mouseup', handleEnd);
+
+        viewport.addEventListener('touchstart', (e) => handleStart(e.touches[0].clientX), { passive: true });
+        window.addEventListener('touchmove', (e) => handleMove(e.touches[0].clientX), { passive: true });
+        window.addEventListener('touchend', handleEnd);
+    }
+
+    // =========================================================================
+    // 2. MODE B: 21st.dev STACKED CARD DECK (Swipe Physics)
+    // =========================================================================
     renderDeckCards() {
         const deckContainer = document.getElementById('deckCardsContainer');
         if (!deckContainer) return;
 
         deckContainer.innerHTML = '';
-        // Render top 5 cards from deckIndex
         const visibleCount = 5;
 
         for (let i = 0; i < visibleCount; i++) {
@@ -131,7 +287,6 @@ class BirthdayGallery {
             card.className = 'deck-card';
             card.dataset.index = i;
 
-            // Stack styling: scale down, translate y, reduce opacity for depth
             const scale = 1 - i * 0.05;
             const translateY = i * 16;
             const translateZ = -i * 50;
@@ -161,7 +316,6 @@ class BirthdayGallery {
                 </div>
             `;
 
-            // Parallax mouse tilt on top card
             if (i === 0) {
                 this.attachCardTilt(card);
             }
@@ -169,7 +323,6 @@ class BirthdayGallery {
             deckContainer.appendChild(card);
         }
 
-        // Update deck counter
         const counter = document.getElementById('deckCounterText');
         if (counter) {
             counter.textContent = `${this.deckIndex + 1} / ${this.photos.length}`;
@@ -210,7 +363,9 @@ class BirthdayGallery {
         this.renderDeckCards();
     }
 
-    // 3. Mode C: Masonry / Pinterest Bento Grid
+    // =========================================================================
+    // 3. MODE C: MASONRY / BENTO GRID
+    // =========================================================================
     renderGrid() {
         const gridContainer = document.getElementById('photoGridContainer');
         if (!gridContainer) return;
@@ -237,7 +392,7 @@ class BirthdayGallery {
 
     switchMode(mode) {
         this.currentMode = mode;
-        const modes = ['carousel3d', 'deck', 'grid'];
+        const modes = ['coverflow', 'deck', 'grid'];
         modes.forEach(m => {
             const sec = document.getElementById(`view-${m}`);
             const btn = document.getElementById(`tabBtn-${m}`);
@@ -245,82 +400,17 @@ class BirthdayGallery {
             if (btn) btn.classList.toggle('active', m === mode);
         });
 
-        if (mode === 'carousel3d') {
-            this.startAutoRotate();
+        if (mode === 'coverflow') {
+            this.updateCoverflowPositions();
+            this.startAutoPlay();
         } else {
-            this.stopAutoRotate();
+            this.stopAutoPlay();
         }
     }
 
-    // 3D Carousel Drag & Controls
-    setupCarouselDrag() {
-        const viewport = document.getElementById('carousel3dViewport');
-        if (!viewport) return;
-
-        let startX = 0;
-        let isDown = false;
-        this.dragDistance = 0;
-
-        const onDown = (e) => {
-            isDown = true;
-            this.stopAutoRotate();
-            startX = (e.pageX || (e.touches && e.touches[0].pageX));
-            this.dragDistance = 0;
-        };
-
-        const onMove = (e) => {
-            if (!isDown) return;
-            const currentX = (e.pageX || (e.touches && e.touches[0].pageX));
-            const deltaX = currentX - startX;
-            this.dragDistance += Math.abs(deltaX);
-            this.carouselAngle += deltaX * 0.28;
-            this.updateCarouselTransform();
-            startX = currentX;
-        };
-
-        const onUp = () => {
-            if (!isDown) return;
-            isDown = false;
-            this.startAutoRotate();
-        };
-
-        viewport.addEventListener('mousedown', onDown);
-        window.addEventListener('mousemove', onMove);
-        window.addEventListener('mouseup', onUp);
-
-        viewport.addEventListener('touchstart', onDown, { passive: true });
-        window.addEventListener('touchmove', onMove, { passive: true });
-        window.addEventListener('touchend', onUp);
-    }
-
-    updateCarouselTransform() {
-        const cylinder = document.getElementById('carousel3dCylinder');
-        if (cylinder) {
-            cylinder.style.transform = `rotateY(${this.carouselAngle}deg)`;
-        }
-    }
-
-    rotateCarousel(delta) {
-        this.carouselAngle += delta;
-        this.updateCarouselTransform();
-    }
-
-    startAutoRotate() {
-        this.stopAutoRotate();
-        this.autoRotateTimer = setInterval(() => {
-            this.carouselAngle -= 0.15; // Slow gentle spin
-            this.updateCarouselTransform();
-        }, 30);
-    }
-
-    stopAutoRotate() {
-        if (this.autoRotateTimer) {
-            clearInterval(this.autoRotateTimer);
-            this.autoRotateTimer = null;
-        }
-    }
-
-    // Interactive Lightbox Modal
+    // =========================================================================
+    // 4. INTERACTIVE LIGHTBOX
+    // =========================================================================
     openLightbox(index) {
         this.activeLightboxIndex = index;
         const photo = this.photos[index];
@@ -365,17 +455,14 @@ class BirthdayGallery {
         if (!photo) return;
         photo.likes++;
 
-        // Update deck count if visible
         const deckSpan = document.getElementById(`deckLikeCount-${photo.id}`);
         if (deckSpan) deckSpan.textContent = photo.likes;
 
-        // Update lightbox button if open
         const likeBtn = document.getElementById('lightboxLikeBtn');
         if (likeBtn && this.activeLightboxIndex === index) {
             likeBtn.innerHTML = `❤️ ${photo.likes} Loves`;
         }
 
-        // Float love heart effect
         if (event) {
             this.spawnFloatingHeart(event.clientX, event.clientY);
         }
@@ -389,19 +476,25 @@ class BirthdayGallery {
         heart.style.top = `${y}px`;
         document.body.appendChild(heart);
 
-        setTimeout(() => {
-            heart.remove();
-        }, 1200);
+        setTimeout(() => { heart.remove(); }, 1200);
     }
 
     setupEventListeners() {
-        // Keyboard arrow navigation
         window.addEventListener('keydown', (e) => {
             const modal = document.getElementById('photoLightboxModal');
             if (modal && modal.classList.contains('active')) {
                 if (e.key === 'ArrowRight') this.lightboxNext();
                 if (e.key === 'ArrowLeft') this.lightboxPrev();
                 if (e.key === 'Escape') this.closeLightbox();
+            } else if (this.currentMode === 'coverflow') {
+                if (e.key === 'ArrowRight') this.nextCoverflow();
+                if (e.key === 'ArrowLeft') this.prevCoverflow();
+            }
+        });
+
+        window.addEventListener('resize', () => {
+            if (this.currentMode === 'coverflow') {
+                this.updateCoverflowPositions();
             }
         });
     }

@@ -9,29 +9,23 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Initialize 3D Three.js Cake
     window.cake3D = new BirthdayCake3D('cake3dContainer');
 
-    // 3. Initialize Sky Lanterns
-    window.skyLanterns = new SkyLanternsManager('lanternSkyCanvas');
-
-    // 4. Setup Intro Unwrapping Ceremony
+    // 3. Setup Intro Unwrapping Ceremony
     setupIntroUnwrap();
 
-    // 5. Setup Wish Wall / Guestbook
+    // 4. Setup Wish Wall / Guestbook
     setupWishWall();
 
-    // 6. Setup Golden Wax-Seal Envelope
+    // 5. Setup Golden Wax-Seal Envelope
     setupWaxSealLetter();
 
-    // 7. Setup Interactive Cake Controls
+    // 6. Setup Interactive Cake Controls
     setupCakeControls();
 
-    // 8. Setup Sparkle Cursor Trail
+    // 7. Setup Sparkle Cursor Trail
     setupSparkleCursor();
 
-    // 9. Setup Floating Love Hearts
+    // 8. Setup Floating Love Hearts
     setupFloatingLove();
-
-    // 10. Setup Lantern Modal
-    setupLanternModal();
 });
 
 // 1. Intro Unwrap Ceremony
@@ -181,16 +175,16 @@ function setupWaxSealLetter() {
 // 4. Wish Wall / Guestbook with LocalStorage
 function setupWishWall() {
     const defaultWishes = [
-        { name: "Tera Best Friend", msg: "Happy Birthday Ambreen! Online mile the hum, par tum sach mein mere jigar ka tukda ban gayi. Hamesha hasti muskurati raho! 💕", date: "Today" },
-        { name: "Aarav", msg: "Happy Birthday Ambreen! Keep blessing everyone with your boundless energy and kindness! 🌟", date: "Today" },
-        { name: "Priya", msg: "To the girl whose laugh cures bad moods! Have the most magical year ahead Ambreen! 💕", date: "Today" },
-        { name: "Dev & Riya", msg: "Wishing you peace, laughter, and every dream fulfilled! Happy Birthday Queen! 👑", date: "Today" },
-        { name: "Kavya", msg: "Always stay your authentic, vibrant, and lovable self Ambreen! Cheers! 🥂", date: "Today" }
+        { 
+            name: "Mustapha", 
+            msg: "Happy Birthday Ambreen! Online mile the hum, lekin tum meri zindagi ki sabse pyari dost aur mere jigar ka tukda ban gayi. Hamesha aise hi hasti muskurati raho, meri dua hai ke tumhari har khwahish poori ho! 💕🎂", 
+            date: "Today" 
+        }
     ];
 
     let stored = [];
     try {
-        stored = JSON.parse(localStorage.getItem('ambreen_birthday_wishes')) || [];
+        stored = JSON.parse(localStorage.getItem('ambreen_wishes_mustapha')) || [];
     } catch(e) { stored = []; }
 
     const allWishes = [...defaultWishes, ...stored];
@@ -234,7 +228,7 @@ function setupWishWall() {
             allWishes.unshift(newWish);
             stored.unshift(newWish);
             try {
-                localStorage.setItem('ambreen_birthday_wishes', JSON.stringify(stored));
+                localStorage.setItem('ambreen_wishes_mustapha', JSON.stringify(stored));
             } catch(e) {}
 
             renderWishes();
@@ -259,56 +253,6 @@ function setupWishWall() {
                 successMsg.style.display = 'block';
                 setTimeout(() => { successMsg.style.display = 'none'; }, 4000);
             }
-        });
-    }
-}
-
-// 5. Sky Lantern Modal & Submission
-function setupLanternModal() {
-    const openBtn = document.getElementById('openLanternModalBtn');
-    const modal = document.getElementById('lanternModal');
-    const closeBtn = document.getElementById('closeLanternModalBtn');
-    const submitBtn = document.getElementById('sendLanternBtn');
-    const senderInput = document.getElementById('lanternSenderInput');
-    const textInput = document.getElementById('lanternWishInput');
-
-    if (!modal) return;
-
-    if (openBtn) {
-        openBtn.addEventListener('click', () => {
-            modal.classList.add('active');
-        });
-    }
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
-    }
-
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) modal.classList.remove('active');
-    });
-
-    // Preset wish pill click
-    document.querySelectorAll('.preset-wish-pill').forEach(pill => {
-        pill.addEventListener('click', () => {
-            if (textInput) textInput.value = pill.textContent.trim();
-        });
-    });
-
-    if (submitBtn) {
-        submitBtn.addEventListener('click', () => {
-            const sender = senderInput ? senderInput.value.trim() : "";
-            const text = textInput ? textInput.value.trim() : "";
-            if (!text) return;
-
-            if (window.skyLanterns) {
-                window.skyLanterns.releaseWish(sender || "A Close Friend", text);
-            }
-
-            modal.classList.remove('active');
-            if (textInput) textInput.value = '';
         });
     }
 }

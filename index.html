@@ -106,8 +106,8 @@
 
             <!-- Mode Switcher Tabs -->
             <div class="gallery-tabs">
-                <button class="tab-btn active" id="tabBtn-carousel3d" onclick="window.birthdayGallery.switchMode('carousel3d')">
-                    🌀 3D Spatial Carousel
+                <button class="tab-btn active" id="tabBtn-coverflow" onclick="window.birthdayGallery.switchMode('coverflow')">
+                    ✨ 3D Spatial Flow
                 </button>
                 <button class="tab-btn" id="tabBtn-deck" onclick="window.birthdayGallery.switchMode('deck')">
                     🃏 3D Depth Card Deck
@@ -117,17 +117,23 @@
                 </button>
             </div>
 
-            <!-- MODE A: 3D Cylindrical Orbit Carousel -->
-            <div class="gallery-view active" id="view-carousel3d">
-                <div class="carousel-3d-viewport" id="carousel3dViewport">
-                    <div class="carousel-3d-cylinder" id="carousel3dCylinder"></div>
+            <!-- MODE A: 3D Spatial Coverflow (Silky smooth, zero glitch/spinning) -->
+            <div class="gallery-view active" id="view-coverflow">
+                <div class="coverflow-viewport" id="coverflowViewport">
+                    <div class="coverflow-track" id="coverflowTrack"></div>
                 </div>
-                <div class="carousel-nav-arrows">
-                    <button class="nav-arrow-btn" onclick="window.birthdayGallery.rotateCarousel(25)" title="Rotate Left">‹</button>
-                    <button class="nav-arrow-btn" onclick="window.birthdayGallery.rotateCarousel(-25)" title="Rotate Right">›</button>
+
+                <!-- Active Photo Info & Controls -->
+                <div class="coverflow-meta">
+                    <div class="coverflow-caption" id="coverflowActiveCaption"></div>
+                    <div class="coverflow-controls">
+                        <button class="nav-arrow-btn" onclick="window.birthdayGallery.prevCoverflow()" title="Previous Memory">‹</button>
+                        <span class="coverflow-counter" id="coverflowCounter">1 / 28</span>
+                        <button class="nav-arrow-btn" onclick="window.birthdayGallery.nextCoverflow()" title="Next Memory">›</button>
+                    </div>
                 </div>
-                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 10px;">
-                    👆 Drag left or right to orbit the 3D gallery | Click any card to inspect in high resolution
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 14px;">
+                    👆 Drag or use arrows to glide through memories | Click center photo to inspect in full resolution
                 </p>
             </div>
 
@@ -149,25 +155,7 @@
             </div>
         </section>
 
-        <!-- SCENE 3: RAPUNZEL GLOWING SKY LANTERNS CEREMONY -->
-        <section class="lantern-section">
-            <span class="section-tag">Yi Peng & Tangled Night Sky</span>
-            <h2 class="section-title">Whispers of Love & Starlight</h2>
-            <p class="section-desc">Release a warm glowing wish lantern that drifts forever into the midnight sky for Ambreen. Tap on any drifting lantern to read whispered wishes.</p>
-
-            <div class="lantern-canvas-wrapper">
-                <canvas id="lanternSkyCanvas"></canvas>
-                <div class="lantern-overlay-hint">
-                    ✨ Tap any floating lantern in the sky to read its heartfelt wish
-                </div>
-            </div>
-
-            <button class="btn-primary" id="openLanternModalBtn">
-                <span>🏮 Release a Wish Lantern for Ambreen</span>
-            </button>
-        </section>
-
-        <!-- SCENE 4: HER STORY & CHAPTERS TIMELINE -->
+        <!-- SCENE 3: HER STORY & CHAPTERS TIMELINE -->
         <section class="timeline-section">
             <span class="section-tag">A Beautiful Connection</span>
             <h2 class="section-title">Chapters of Ambreen</h2>
@@ -252,13 +240,14 @@
                         Is janamdin par meri dil se dua hai ke Allah tumhe har wo khushi de jo tum deserve karti ho. Tumhari aankhon mein kabhi dukh na aaye, tumhara chehra hamesha aise hi muskurata rahe, aur humari ye dosti hamesha aise hi salamat rahe.
                     </p>
                     <div class="parchment-signature">
-                        Hamesha Tera Acha Dost • Mere Jigar Ka Tukda 💕
+                        Hamesha Tera Acha Dost • Mustapha 💕<br>
+                        <span style="font-size: 1.15rem; color: #b45309;">(Mere Jigar Ka Tukda)</span>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SCENE 6: WISHES WALL & GUESTBOOK -->
+        <!-- SCENE 4: WISHES WALL & GUESTBOOK -->
         <section class="wishes-section">
             <span class="section-tag">Leave Your Love</span>
             <h2 class="section-title">The Birthday Wish Wall</h2>
@@ -292,7 +281,7 @@
         <footer>
             <p>Crafted with endless affection <span class="heart">❤️</span> for <strong>Ambreen</strong> on her Birthday.</p>
             <p style="margin-top: 6px; font-size: 0.78rem; color: var(--text-muted);">
-                Dedicated to Mere Jigar Ka Tukda • Engineered with Three.js WebGL & 21st.dev UI Patterns.
+                Dedicated to Mere Jigar Ka Tukda • From Mustapha with Love.
             </p>
         </footer>
 
@@ -330,39 +319,6 @@
         </div>
     </div>
 
-    <!-- Release Lantern Modal -->
-    <div class="modal-backdrop" id="lanternModal">
-        <div class="modal-window">
-            <span class="modal-close-btn" id="closeLanternModalBtn">&times;</span>
-            <h3 class="modal-title">🏮 Release a Wish Lantern</h3>
-            <p style="font-size: 0.88rem; color: var(--text-secondary);">
-                Your wish will be inscribed in light and sent floating into the midnight sky for Ambreen.
-            </p>
-
-            <span class="preset-wishes-label">Or choose a quick blessing:</span>
-            <div class="preset-wishes-pills">
-                <span class="preset-wish-pill">✨ Endless smiles & pure bliss!</span>
-                <span class="preset-wish-pill">👑 Mera jigar ka tukda, hamesha khush raho!</span>
-                <span class="preset-wish-pill">🌟 May all your wishes come true, Ambreen!</span>
-                <span class="preset-wish-pill">💕 Sabse pyari dost, happy birthday!</span>
-            </div>
-
-            <div class="form-group">
-                <label for="lanternSenderInput">Your Name</label>
-                <input type="text" id="lanternSenderInput" placeholder="e.g. Your Best Friend">
-            </div>
-
-            <div class="form-group">
-                <label for="lanternWishInput">Your Wish for Ambreen</label>
-                <textarea id="lanternWishInput" rows="3" placeholder="Write your heartfelt wish here..."></textarea>
-            </div>
-
-            <button class="btn-primary" id="sendLanternBtn" style="width: 100%; justify-content: center;">
-                <span>✨ Send Lantern to the Sky ✨</span>
-            </button>
-        </div>
-    </div>
-
     <!-- ======================================================================
          CORE SCRIPTS (ALL SAVED LOCALLY FOR INSTANT 0ms ZERO-LATENCY LOADING)
          ====================================================================== -->
@@ -376,7 +332,6 @@
     <script src="assets/js/audio.js"></script>
     <script src="assets/js/three-scene.js"></script>
     <script src="assets/js/gallery-3d.js"></script>
-    <script src="assets/js/lanterns.js"></script>
     <script src="assets/js/fireworks.js"></script>
     <script src="assets/js/app.js"></script>
 </body>
