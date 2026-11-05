@@ -8,7 +8,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
     
     <!-- Design System Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=3.0">
+    <link rel="stylesheet" href="assets/css/style.css?v=3.5">
 </head>
 <body class="locked-countdown">
 
@@ -118,7 +118,7 @@
                 <div class="sms-header">
                     <div class="sms-avatar">M</div>
                     <div class="sms-info">
-                        <div class="sms-name">Mustapha 💕</div>
+                        <div class="sms-name">Mustafa 💕</div>
                         <div class="sms-status">Mere Jigar Ka Tukda</div>
                     </div>
                     <span class="sms-badge">12:00 AM Midnight</span>
@@ -133,10 +133,10 @@
                 </div>
             </div>
 
-            <!-- VIP / Preview Unlock Button (For Mustapha to test anytime) -->
+            <!-- VIP / Preview Unlock Button (For Mustafa to test anytime) -->
             <div class="countdown-actions">
-                <button class="btn-unlock-preview" id="unlockPreviewBtn" title="Mustapha VIP Access / Preview Celebration Early">
-                    <span>🔓 Preview Surprise Now (VIP Access)</span>
+                <button class="btn-unlock-preview" id="unlockPreviewBtn" title="Mustafa VIP Access (Secret Code Protected)">
+                    <span>🔐 VIP Preview (Code: Mustafa Only)</span>
                 </button>
             </div>
         </div>
@@ -347,7 +347,7 @@
                         Is janamdin par meri dil se dua hai ke Allah tumhe har wo khushi de jo tum deserve karti ho. Tumhari aankhon mein kabhi dukh na aaye, tumhara chehra hamesha aise hi muskurata rahe, aur humari ye dosti hamesha aise hi salamat rahe.
                     </p>
                     <div class="parchment-signature">
-                        Hamesha Tera Acha Dost • Mustapha 💕<br>
+                        Hamesha Tera Acha Dost • Mustafa 💕<br>
                         <span style="font-size: 1.15rem; color: #b45309;">(Mere Jigar Ka Tukda)</span>
                     </div>
                 </div>
@@ -388,7 +388,7 @@
         <footer>
             <p>Crafted with endless affection <span class="heart">❤️</span> for <strong>Ambreen</strong> on her Birthday.</p>
             <p style="margin-top: 6px; font-size: 0.78rem; color: var(--text-muted);">
-                Dedicated to Mere Jigar Ka Tukda • From Mustapha with Love.
+                Dedicated to Mere Jigar Ka Tukda • From Mustafa with Love.
             </p>
         </footer>
 
@@ -439,10 +439,28 @@
     <script src="assets/js/confetti.browser.min.js"></script>
 
     <!-- Custom Feature Modules -->
-    <script src="assets/js/audio.js?v=3.0"></script>
-    <script src="assets/js/three-scene.js?v=3.0"></script>
-    <script src="assets/js/gallery-3d.js?v=3.0"></script>
-    <script src="assets/js/fireworks.js?v=3.0"></script>
-    <script src="assets/js/app.js?v=3.0"></script>
+    <script src="assets/js/audio.js?v=3.5"></script>
+    <script src="assets/js/three-scene.js?v=3.5"></script>
+    <script src="assets/js/gallery-3d.js?v=3.5"></script>
+    <script src="assets/js/fireworks.js?v=3.5"></script>
+    <script src="assets/js/app.js?v=3.5"></script>
+
+    <!-- VIP Passcode Modal (Secret Code: 2721 - Sirf Mustafa Ke Liye) -->
+    <div class="vip-modal-backdrop" id="vipModalBackdrop" style="display: none;">
+        <div class="vip-modal-card">
+            <div class="vip-modal-icon">🔐</div>
+            <h3 class="vip-modal-title">Mustafa's VIP Key</h3>
+            <p class="vip-modal-subtitle">Sirf Mustafa ke liye secret passkey (4-digit code):</p>
+            <div class="vip-pin-container">
+                <input type="password" id="vipPinInput" maxlength="4" placeholder="••••" inputmode="numeric" autocomplete="off">
+            </div>
+            <div class="vip-error-msg" id="vipErrorMsg" style="display: none;">❌ Galat code! Sirf Mustafa ke paas VIP key hai.</div>
+            <div class="vip-modal-actions">
+                <button type="button" class="vip-btn-cancel" id="vipCancelBtn">Cancel</button>
+                <button type="button" class="vip-btn-submit" id="vipSubmitBtn">Unlock Surprise ✨</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 </html>

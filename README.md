@@ -19,14 +19,14 @@ An immersive, 3D interactive birthday celebration website created with love for 
   - **High-Res Lightbox**: Fullscreen inspection with interactive heart like reactions.
 - **📜 Royal Wax-Seal Birthday Letter**:
   - 3D wax seal with monogram **'A'**.
-  - Tap seal to break and unfold an emotional handwritten parchment letter from Mustapha celebrating this special friendship.
+  - Tap seal to break and unfold an emotional handwritten parchment letter from Mustafa celebrating this special friendship.
 - **📖 Chapters of Ambreen**: A story timeline commemorating the journey from meeting online to becoming best friends and *mere jigar ka tukda*.
 - **🎵 Procedural Web Audio API Synthesizer**:
   - 100% zero-network dependency, zero audio loading latency.
   - Synthesizes soothing music box and acoustic chord melodies for "Happy Birthday Ambreen".
   - Interactive spinning vinyl disc and animated equalizer bars.
 - **🎆 Interactive Fireworks Engine**: Click anywhere on the screen to launch realistic physics-based fireworks rockets and sparkle explosions.
-- **📌 Interactive Birthday Wish Wall**: Pinned guestbook with persistent `localStorage` and a heartfelt default wish from Mustapha.
+- **📌 Interactive Birthday Wish Wall**: Pinned guestbook with persistent `localStorage` and a heartfelt default wish from Mustafa.
 
 ---
 

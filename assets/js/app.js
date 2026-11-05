@@ -47,7 +47,7 @@ function setupCountdownLock() {
         localStorage.removeItem('ambreen_birthday_preview_unlocked');
     } catch(e) {}
 
-    // Check query params: e.g. ?preview=true or ?unlock=true (for testing by Mustapha)
+    // Check query params: e.g. ?preview=true or ?unlock=true (for testing by Mustafa)
     const urlParams = new URLSearchParams(window.location.search);
     const isBypass = urlParams.has('preview') || urlParams.has('unlock');
 
@@ -144,10 +144,98 @@ function setupCountdownLock() {
     tick();
     const timerInterval = setInterval(tick, 1000);
 
+    // VIP Passcode Protection: Code is 2721 (Sirf Mustafa Ke Liye)
+    const VIP_SECRET_PIN = "2721";
+    const vipModal = document.getElementById('vipModalBackdrop');
+    const vipPinInput = document.getElementById('vipPinInput');
+    const vipSubmitBtn = document.getElementById('vipSubmitBtn');
+    const vipCancelBtn = document.getElementById('vipCancelBtn');
+    const vipErrorMsg = document.getElementById('vipErrorMsg');
+
+    // Also support query param: ?preview=2721 or ?unlock=2721
+    if (urlParams.get('preview') === VIP_SECRET_PIN || urlParams.get('unlock') === VIP_SECRET_PIN) {
+        unlockWebsite(false);
+        return;
+    }
+
+    function openVipModal() {
+        if (!vipModal) return;
+        vipModal.style.display = 'flex';
+        if (vipErrorMsg) vipErrorMsg.style.display = 'none';
+        if (vipPinInput) {
+            vipPinInput.value = '';
+            setTimeout(() => vipPinInput.focus(), 100);
+        }
+    }
+
+    function closeVipModal() {
+        if (!vipModal) return;
+        vipModal.style.display = 'none';
+        if (vipErrorMsg) vipErrorMsg.style.display = 'none';
+    }
+
+    function verifyVipPin() {
+        if (!vipPinInput) return;
+        const entered = vipPinInput.value.trim();
+        if (entered === VIP_SECRET_PIN) {
+            if (vipErrorMsg) vipErrorMsg.style.display = 'none';
+            closeVipModal();
+            unlockWebsite(true);
+        } else {
+            if (vipErrorMsg) {
+                vipErrorMsg.style.display = 'block';
+                vipErrorMsg.textContent = "❌ Galat code! Sirf Mustafa ke paas VIP key hai.";
+            }
+            const card = vipModal ? vipModal.querySelector('.vip-modal-card') : null;
+            if (card) {
+                card.classList.add('shake-anim');
+                setTimeout(() => card.classList.remove('shake-anim'), 600);
+            }
+            if (window.birthdayAudio && typeof window.birthdayAudio.playCardFlip === 'function') {
+                window.birthdayAudio.playCardFlip();
+            }
+            vipPinInput.value = '';
+            vipPinInput.focus();
+        }
+    }
+
     if (unlockBtn) {
         unlockBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            unlockWebsite(true);
+            openVipModal();
+        });
+    }
+
+    if (vipSubmitBtn) {
+        vipSubmitBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            verifyVipPin();
+        });
+    }
+
+    if (vipPinInput) {
+        vipPinInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                verifyVipPin();
+            } else if (e.key === 'Escape') {
+                closeVipModal();
+            }
+        });
+    }
+
+    if (vipCancelBtn) {
+        vipCancelBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            closeVipModal();
+        });
+    }
+
+    if (vipModal) {
+        vipModal.addEventListener('click', (e) => {
+            if (e.target === vipModal) {
+                closeVipModal();
+            }
         });
     }
 
@@ -397,16 +485,17 @@ function setupWaxSealLetter() {
 // 4. Wish Wall / Guestbook with LocalStorage
 function setupWishWall() {
     // Clean up old demo storage keys from earlier builds to remove any agent demo notes
-    try {
+        try {
         localStorage.removeItem('ambreen_birthday_wishes');
         localStorage.removeItem('birthday_wishes');
         localStorage.removeItem('wishes');
+        localStorage.removeItem('ambreen_wishes_mustapha');
     } catch(e) {}
 
-    // Only ONE heartfelt wish from Mustapha (spelled M-U-S-T-A-P-H-A)
+    // Only ONE heartfelt wish from Mustafa (spelled M-U-S-T-A-F-A)
     const defaultWishes = [
         { 
-            name: "Mustapha", 
+            name: "Mustafa", 
             msg: "Happy Birthday Ambreen! Online mile the hum, lekin tum meri zindagi ki sabse pyari dost aur mere jigar ka tukda ban gayi. Hamesha aise hi hasti muskurati raho, meri dua hai ke tumhari har khwahish poori ho! 💕🎂", 
             date: "Today" 
         }
@@ -414,7 +503,7 @@ function setupWishWall() {
 
     let stored = [];
     try {
-        const raw = JSON.parse(localStorage.getItem('ambreen_wishes_mustapha')) || [];
+        const raw = JSON.parse(localStorage.getItem('ambreen_wishes_mustafa')) || [];
         // Purge any agent dummy wishes that might contain old demo names
         const dummyNames = ['aarav', 'priya', 'dev & riya', 'kavya', 'ankit', 'maya'];
         stored = raw.filter(item => item && item.name && !dummyNames.includes(item.name.toLowerCase()));
@@ -461,7 +550,7 @@ function setupWishWall() {
             allWishes.unshift(newWish);
             stored.unshift(newWish);
             try {
-                localStorage.setItem('ambreen_wishes_mustapha', JSON.stringify(stored));
+                localStorage.setItem('ambreen_wishes_mustafa', JSON.stringify(stored));
             } catch(e) {}
 
             renderWishes();
