@@ -137,7 +137,10 @@ function setupCountdownLock() {
         if (secsEl) secsEl.textContent = String(s).padStart(2, '0');
     }
 
-    // Run tick immediately so numbers are instant
+    // Handover from instant ticker to full orchestrator
+    if (window._instantCountdownTimer) {
+        clearInterval(window._instantCountdownTimer);
+    }
     tick();
     const timerInterval = setInterval(tick, 1000);
 

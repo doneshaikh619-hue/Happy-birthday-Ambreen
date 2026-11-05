@@ -8,7 +8,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
     
     <!-- Design System Stylesheet -->
-    <link rel="stylesheet" href="assets/css/style.css?v=2.2">
+    <link rel="stylesheet" href="assets/css/style.css?v=3.0">
 </head>
 <body class="locked-countdown">
 
@@ -81,6 +81,37 @@
                     <span class="countdown-label">Seconds</span>
                 </div>
             </div>
+
+            <!-- Instant Zero-Latency Live Countdown Ticker (Executes immediately without waiting for any assets) -->
+            <script>
+                (function() {
+                    function updateInstantCountdown() {
+                        try {
+                            var hEl = document.getElementById('countdownHours');
+                            var mEl = document.getElementById('countdownMinutes');
+                            var sEl = document.getElementById('countdownSeconds');
+                            if (!hEl || !mEl || !sEl) return;
+                            var now = new Date();
+                            var target = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0).getTime();
+                            var diff = target - now.getTime();
+                            if (diff <= 0) {
+                                hEl.textContent = '00';
+                                mEl.textContent = '00';
+                                sEl.textContent = '00';
+                                return;
+                            }
+                            var h = Math.floor(diff / (1000 * 60 * 60));
+                            var m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                            var s = Math.floor((diff % (1000 * 60)) / 1000);
+                            hEl.textContent = String(h).padStart(2, '0');
+                            mEl.textContent = String(m).padStart(2, '0');
+                            sEl.textContent = String(s).padStart(2, '0');
+                        } catch(e) {}
+                    }
+                    updateInstantCountdown();
+                    window._instantCountdownTimer = setInterval(updateInstantCountdown, 1000);
+                })();
+            </script>
 
             <!-- Heartfelt SMS Message Card (iOS iMessage Style) -->
             <div class="countdown-sms-card">
@@ -408,10 +439,10 @@
     <script src="assets/js/confetti.browser.min.js"></script>
 
     <!-- Custom Feature Modules -->
-    <script src="assets/js/audio.js?v=2.2"></script>
-    <script src="assets/js/three-scene.js?v=2.2"></script>
-    <script src="assets/js/gallery-3d.js?v=2.2"></script>
-    <script src="assets/js/fireworks.js?v=2.2"></script>
-    <script src="assets/js/app.js?v=2.2"></script>
+    <script src="assets/js/audio.js?v=3.0"></script>
+    <script src="assets/js/three-scene.js?v=3.0"></script>
+    <script src="assets/js/gallery-3d.js?v=3.0"></script>
+    <script src="assets/js/fireworks.js?v=3.0"></script>
+    <script src="assets/js/app.js?v=3.0"></script>
 </body>
 </html>
